@@ -1,23 +1,11 @@
 "use client";
-import { useState } from "react";
+import "./page.css";
 
-import styles from "./page.module.css";
+import { FormEventHandler, Suspense, useState } from "react";
+
 import { SearchMatch } from "./api/search/route";
-
-function renderContent(paragraph: string, query: string) {
-  const parts = paragraph.split(query);
-
-  const spans: JSX.Element[] = [];
-  for (let i = 0; i < parts.length; i++) {
-    spans.push(<text key={i}>{parts[i]}</text>);
-
-    if (i < parts.length - 1) {
-      spans.push(<b key={`hightlight-${i}`}>{query}</b>);
-    }
-  }
-
-  return <>{spans}</>;
-}
+import SearchResults from "./SearchResults";
+import Fullbook from "./FullBook";
 
 interface SearchResults {
   query: string;
@@ -28,44 +16,63 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResults>();
 
+  const performSearch: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(
+      "/api/search?" +
+        new URLSearchParams({
+          q: query,
+        }),
+    );
+
+    setResults({
+      query,
+      matches: await response.json(),
+    });
+  };
+
+  const showFullBook = query !== "";
+
   return (
-    <main className={styles.main}>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
+    <main className="container">
+      <form onSubmit={performSearch}>
+        <fieldset>
+          <div className="form-group">
+            <label htmlFor="q">Search Text</label>
+            <input
+              id="q"
+              name="q"
+              type="text"
+              value={query}
+              onChange={(e) => {
+                e.preventDefault();
+                setQuery(e.target.value);
+              }}
+            />
+          </div>
 
-          const response = await fetch(
-            "/api/search?" +
-              new URLSearchParams({
-                q: query,
-              }),
-          );
-
-          setResults({
-            query,
-            matches: await response.json(),
-          });
-        }}
-      >
-        <input
-          type="text"
-          name="q"
-          value={query}
-          onChange={(e) => {
-            e.preventDefault();
-            setQuery(e.target.value);
-          }}
-        />
-        <button type="submit">Search</button>
+          <div className="form-group">
+            <button
+              className="btn btn-default"
+              type="submit"
+              role="button"
+              name="submit"
+              id="submit"
+            >
+              Search
+            </button>
+          </div>
+        </fieldset>
       </form>
-
-      {results?.matches.map((x, i) => (
-        <div key={i}>
-          <div>{x.chapter}</div>
-          <div>Paragraph: {x.paragraphPosition}</div>
-          <p>{renderContent(x.paragraph, results.query)}</p>
-        </div>
-      ))}
+      {showFullBook && results ? (
+        <SearchResults matches={results.matches} query={results?.query} />
+      ) : null}
+      {!showFullBook && (
+        <Suspense fallback="Loading book...">
+          <Fullbook />
+        </Suspense>
+      )}
     </main>
   );
 }

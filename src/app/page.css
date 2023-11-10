@@ -1,0 +1,4 @@
+span.highlight {
+    font-weight: bolder;
+    color: var(--primary-color);
+  }
