@@ -5,6 +5,7 @@ import { FormEventHandler, Suspense, useState } from "react";
 import { SearchMatch } from "./api/search/route";
 import SearchResults from "./SearchResults";
 import Fullbook from "./FullBook";
+import GhostButton from "./GhostButton";
 
 interface SearchResults {
   query: string;
@@ -55,14 +56,14 @@ export default function Home() {
           </div>
 
           <div className="form-group">
+            <GhostButton />
+
             <button
               className="btn btn-default"
-              type="submit"
-              role="button"
-              name="submit"
-              id="submit"
+              type="button"
+              style={{ visibility: "hidden" }}
             >
-              Search
+              Just here to keep the space
             </button>
           </div>
         </fieldset>
