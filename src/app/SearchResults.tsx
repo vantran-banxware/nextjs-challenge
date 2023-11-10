@@ -1,5 +1,3 @@
-"use client";
-
 import { SearchMatch } from "./api/search/route";
 
 function renderContent(paragraph: string, query: string) {
@@ -11,7 +9,7 @@ function renderContent(paragraph: string, query: string) {
 
     if (i < parts.length - 1) {
       spans.push(
-        <span className="hightlight" key={`hightlight-${i}`}>
+        <span className="hljs-symbol hljs-emphasis" key={`hightlight-${i}`}>
           {query}
         </span>,
       );
@@ -30,7 +28,7 @@ export default function SearchResults({ query, matches }: SearchResultsProps) {
   return (
     <section>
       <header>
-        <h2>Results</h2>
+        <h1>Results</h1>
       </header>
 
       {matches.map((x, i) => (

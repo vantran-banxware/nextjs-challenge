@@ -1,5 +1,4 @@
 "use client";
-import "./page.css";
 
 import { FormEventHandler, Suspense, useState } from "react";
 
@@ -37,6 +36,9 @@ export default function Home() {
   return (
     <main className="container">
       <form onSubmit={performSearch}>
+        <legend>
+          <h1>Search</h1>
+        </legend>
         <fieldset>
           <div className="form-group">
             <label htmlFor="q">Search Text</label>
